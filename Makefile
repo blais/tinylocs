@@ -8,7 +8,8 @@ DOMAIN=go.furius.ca
 PORT=8080
 IMAGE=us-docker.pkg.dev/$(PROJECT)/gcr.io/$(SERVICE)
 GOOGLE_APPLICATION_CREDENTIALS=$(HOME)/.google/static-website-with-ssh-c3c90494d39e.json
-APPDIR=tinyloc
+APPDIR=.
+TESTPASS=enter  # Note: Set the real one in the Google Cloud Run "environments & secrets".
 
 # Build a local version of the container.
 build:
@@ -26,13 +27,14 @@ deploy:
 # Run the container locally for testing.
 CREDS =											\
    -e GOOGLE_APPLICATION_CREDENTIALS=/tmp/keys/static-website-with-ssh.json		\
-   -v $(GOOGLE_APPLICATION_CREDENTIALS):/tmp/keys/static-website-with-ssh.json:ro
+   -v $(GOOGLE_APPLICATION_CREDENTIALS):/tmp/keys/static-website-with-ssh.json:ro	\
+   -e TINYLOCS_PASS=$(TESTPASS)
 
-# direct direct-run:
-# 	PYTHONUNBUFFERED=1 FLASK_ENV=development gunicorn --bind :8080 --workers 2 --threads 8 --timeout 0 tinylocs.main:app
+debug:
+	PYTHONUNBUFFERED=1 FLASK_ENV=development gunicorn --bind :8080 --workers 2 --threads 8 --timeout 0 tinylocs.app:app
 
-direct direct-run:
-	PYTHONUNBUFFERED=1 FLASK_ENV=development FLASK_APP=tinylocs.main:app TINYLOCS_PASS=enter flask run --port=8080
+local:
+	PYTHONUNBUFFERED=1 FLASK_ENV=development FLASK_APP=tinylocs.app:app TINYLOCS_PASS=$(TESTPASS) flask run --port=8080
 
 run docker-run:
 	docker run -p 8080:$(PORT) -e PORT=$(PORT) $(CREDS) $(SERVICE)
