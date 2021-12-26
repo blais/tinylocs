@@ -1,0 +1,17 @@
+<!doctype html>
+<html>
+{% include '_head.html' %}
+<body>
+{% include '_navigation.html' %}
+
+<h1>Search</h1>
+<form method=post>
+  <p>By Name:
+  {{ form.byname() }}
+  <p>By URL:
+  {{ form.byurl() }}
+  <input type=submit value="Search">
+</form>
+
+</body>
+</html>

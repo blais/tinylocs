@@ -1,0 +1,19 @@
+<!doctype html>
+<html>
+{% include '_head.html' %}
+<body>
+{% include '_navigation.html' %}
+
+<h1>Add link</h1>
+<form method=post>
+  <p>Name:
+  {{ form.name() }}
+  <p>Alias:
+  {{ form.alias() }}
+  <p>URL:
+  {{ form.url() }}
+  <input type=submit value="Add">
+</form>
+
+</body>
+</html>
