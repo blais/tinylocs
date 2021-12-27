@@ -1,5 +1,14 @@
 """Example script to read from a bucket."""
 
+# TODO(blais): Implement partial match and typo auto-fixing
+# TODO(blais): Implement search
+# TODO(blais): Add access statistics (count, latest date)
+# TODO(blais): Add expiration date
+# TODO(blais): Make a script to upload to Drive and create a link at the same time
+# TODO(blais): Support a boolean flag to render in an iframe
+# TODO(blais): Auto-clean up Google drive links (remove /edit)
+# TODO(blais): Document ids do not support /; figure out how to support those
+
 import os
 import logging
 import functools
@@ -21,8 +30,6 @@ def create_app():
                       template_folder=path.join(approot, 'templates'))
     app.logger.setLevel(logging.INFO)
     app.config['SECRET_KEY'] = 'de49e1d6-84cb-42ae-9966-a9ba40031608'
-    ##storage_client = storage.Client()
-
     try:
         app.passphrase = os.environ['TINYLOCS_PASS']
     except KeyError:
@@ -98,33 +105,36 @@ def go(name):
             return flask.abort(403, description="Access denied")
         url = request.form.get('url')
         alias = request.form.get('alias')
-        add_link(name, alias, url)
+        update_link(name, alias, url)
         if request.method == 'POST':
             return redirect(url_for('done'))
         else:
-            # PUT requests, return for a shell command.
+            # For PUT requests, return for a shell command.
             return 'DONE\n'
 
-    elif request.method in {'PUT', 'POST'}:
+    elif request.method == 'DELETE':
         # Check passphrase and craete/update link.
         passphrase = request.form.get('passphrase')
         if passphrase != app.passphrase:
             return flask.abort(403, description="Access denied")
-        add_link(name, alias, url)
-        return redirect(url_for('done'))
+        update_link(name, None, None)
+        return 'DONE\n'
 
 
-def add_link(name, alias, url):
+def update_link(name, alias, url):
     """Handle adding a link."""
     doc_ref = get(name)
     if not alias and not url:
         # Delete the entity.
+        doc = doc_ref.get()
+        if not doc.exists:
+            return flask.abort(400, description="Name does not exist")
         doc_ref.delete()
 
     elif not url:
         # Add an alias to an existing entity.
         doc = doc_ref.get()
-        if not doc.exist:
+        if not doc.exists:
             return flask.abort(400, description="Name does not exist")
         docdict = doc.to_dict()
         aliases = docdict.setdefault('alias', [])
@@ -146,7 +156,7 @@ class AddForm(wtforms.Form):
 
 
 @app.route('/_/add', defaults={'name': None}, methods=['GET', 'POST'])
-@app.route('/_/add/<name>')
+@app.route('/_/add/<name>', methods=['GET', 'POST'])
 @login_required
 def add(name: Optional[str]):
     if request.method == 'GET':
@@ -158,7 +168,7 @@ def add(name: Optional[str]):
         name = request.form.get('name')
         alias = request.form.get('alias')
         url = request.form.get('url')
-        add_link(name, alias, url)
+        update_link(name, alias, url)
         return redirect(url_for('done'))
 
 
@@ -187,11 +197,3 @@ def search():
 @login_required
 def home():
     return redirect(url_for('add'))
-
-
-# TODO(blais): Implement search
-# TODO(blais): Add access statistics (count, latest date)
-# TODO(blais): Add expiration date
-# TODO(blais): Make a script to upload to Drive and create a link at the same time
-# TODO(blais): Support a boolean flag to render in an iframe
-# TODO(blais): Clean up Google drive links (remove /edit)

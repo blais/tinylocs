@@ -9,7 +9,10 @@ PORT=8080
 IMAGE=us-docker.pkg.dev/$(PROJECT)/gcr.io/$(SERVICE)
 GOOGLE_APPLICATION_CREDENTIALS=$(HOME)/.google/static-website-with-ssh-c3c90494d39e.json
 APPDIR=.
-TESTPASS=enter  # Note: Set the real one in the Google Cloud Run "environments & secrets".
+
+# Note: Set the real passphrase in the Google Cloud Run "environments & secrets".
+TINYLOCS_PASS=enter
+export TINYLOCS_PASS
 
 # Build a local version of the container.
 build:
@@ -34,7 +37,7 @@ debug:
 	PYTHONUNBUFFERED=1 FLASK_ENV=development gunicorn --bind :8080 --workers 2 --threads 8 --timeout 0 tinylocs.app:app
 
 local:
-	PYTHONUNBUFFERED=1 FLASK_ENV=development FLASK_APP=tinylocs.app:app TINYLOCS_PASS=$(TESTPASS) flask run --port=8080
+	PYTHONUNBUFFERED=1 FLASK_ENV=development FLASK_APP=tinylocs.app:app flask run --port=8080
 
 run docker-run:
 	docker run -p 8080:$(PORT) -e PORT=$(PORT) $(CREDS) $(SERVICE)
