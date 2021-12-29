@@ -107,7 +107,7 @@ def go(name):
         alias = request.form.get('alias')
         update_link(name, alias, url)
         if request.method == 'POST':
-            return redirect(url_for('done'))
+            return redirect(url_for('done', name=name))
         else:
             # For PUT requests, return for a shell command.
             return 'DONE\n'
@@ -169,13 +169,13 @@ def add(name: Optional[str]):
         alias = request.form.get('alias')
         url = request.form.get('url')
         update_link(name, alias, url)
-        return redirect(url_for('done'))
+        return redirect(url_for('done', name=name))
 
 
-@app.route("/_/done")
+@app.route("/_/done/<name>")
 @login_required
-def done():
-    return render_template('done.html')
+def done(name: str):
+    return render_template('done.html', url=url_for('go', name=name, _external=True))
 
 
 class SearchForm(wtforms.Form):

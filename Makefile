@@ -1,13 +1,15 @@
 #!/usr/bin/env make
 # Makefile for building my personal shortlnks website on Google Cloud Run.
 
+# Replace the following with your own values.
 PROJECT=static-website-with-ssh
 SERVICE=go-furius-ca
-REGION=us-east4
 DOMAIN=go.furius.ca
+REGION=us-east4
+
 PORT=8080
 IMAGE=us-docker.pkg.dev/$(PROJECT)/gcr.io/$(SERVICE)
-GOOGLE_APPLICATION_CREDENTIALS=$(HOME)/.google/static-website-with-ssh-c3c90494d39e.json
+GOOGLE_APPLICATION_CREDENTIALS=$(HOME)/.google/$(PROJECT).json
 APPDIR=.
 
 # Note: Set the real passphrase in the Google Cloud Run "environments & secrets".
@@ -28,9 +30,9 @@ deploy:
 	gcloud run deploy $(SERVICE) --image $(IMAGE) --region=$(REGION) --allow-unauthenticated
 
 # Run the container locally for testing.
-CREDS =											\
-   -e GOOGLE_APPLICATION_CREDENTIALS=/tmp/keys/static-website-with-ssh.json		\
-   -v $(GOOGLE_APPLICATION_CREDENTIALS):/tmp/keys/static-website-with-ssh.json:ro	\
+CREDS =									\
+   -e GOOGLE_APPLICATION_CREDENTIALS=/tmp/keys/$(PROJECT).json		\
+   -v $(GOOGLE_APPLICATION_CREDENTIALS):/tmp/keys/$(PROJECT).json:ro	\
    -e TINYLOCS_PASS=$(TESTPASS)
 
 debug:

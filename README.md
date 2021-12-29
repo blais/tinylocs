@@ -6,7 +6,12 @@ This is my personal shortlinks server. Design goals:
 - Hosted on Google Cloud Run and used Google Cloud Datastore. (This costs roughly
   ~0 to run and you don't have to manage a VM).
 
-See Makefile for details.
+See Makefile for details, but this does all the work that's needed for an update:
+
+    make build push deploy
+
+(You'll have to change the variables at the top to match your own cloud project
+and DNS mapping.)
 
 To create a link from the command-line, use a PUT request:
 
