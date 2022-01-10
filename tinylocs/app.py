@@ -8,6 +8,9 @@
 # TODO(blais): Support a boolean flag to render in an iframe
 # TODO(blais): Auto-clean up Google drive links (remove /edit)
 # TODO(blais): Document ids do not support /; figure out how to support those
+# TODO(blais): When adding a link, automatically detect if it should be an alias
+# (if it is a duplicate)
+
 
 import os
 import logging
