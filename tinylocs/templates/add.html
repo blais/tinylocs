@@ -4,15 +4,20 @@
 <body>
 {% include '_navigation.html' %}
 
-<h1>Add link</h1>
+<h1>{{ title }}</h1>
 <form method=post>
-  <p>Name:
-  {{ form.name() }}
-  <p>Alias:
-  {{ form.alias() }}
-  <p>URL:
-  {{ form.url() }}
-  <input type=submit value="Add">
+  <table>
+    <tr>
+      <td>Name:</td><td class="input">{{ form.name() }}</td>
+    </tr>
+    <tr>
+      <td>URL:</td><td class="input">{{ form.url() }}</td>
+    </tr>
+    <tr>
+      <td>Alias:</td><td class="input">{{ form.alias() }}</td>
+    </tr>
+  </table>
+  <input type=submit value="{{ button_name }}">
 </form>
 
 </body>
