@@ -181,7 +181,7 @@ def entity(name: Optional[str]):
         else:
             form.name.data = name
             button_name = "Create"
-        return render_template("add.html", form=form, title="Entity", button_name=button_name)
+        return render_template("entity.html", form=form, title="Entity", button_name=button_name)
 
     elif request.method == "POST":
         name = request.form.get("name")
