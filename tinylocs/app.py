@@ -117,7 +117,7 @@ def go(name):
             return flask.abort(403, description="Access denied")
         url = request.form.get("url")
         alias = request.form.get("alias")
-        update_link(name, alias, url)
+        update_entity(name, alias, url)
         if request.method == "POST":
             return redirect(url_for("done", name=name))
         else:
@@ -129,25 +129,26 @@ def go(name):
         passphrase = request.form.get("passphrase")
         if passphrase != app.passphrase:
             return flask.abort(403, description="Access denied")
-        update_link(name, None, None)
+        update_entity(name, None, None)
         return "DONE\n"
 
 
-def update_link(name, alias, url):
+def update_entity(name, alias, url):
     """Handle adding a link."""
+    app.logger.info(f"Updating link for: {name} / {alias} / {url}")
     doc_ref = get(name)
     if not alias and not url:
         # Delete the entity.
         doc = doc_ref.get()
         if not doc.exists:
-            return flask.abort(400, description="Name does not exist")
+            return flask.abort(400, description="Name does not exist (for deletion)")
         doc_ref.delete()
 
     elif not url:
         # Add an alias to an existing entity.
         doc = doc_ref.get()
         if not doc.exists:
-            return flask.abort(400, description="Name does not exist")
+            return flask.abort(400, description="Name does not exist (for alias)")
         docdict = doc.to_dict()
         aliases = docdict.setdefault("alias", [])
         aliases.append(alias)
@@ -175,6 +176,7 @@ def entity(name: Optional[str]):
         doc = doc_ref.get().to_dict()
         form = LinkForm(request.form)
         if doc:
+            # TODO(blais): Add a Delete button and process.
             button_name = "Update"
             for attr, value in doc.items():
                 getattr(form, attr).data = value
@@ -187,7 +189,7 @@ def entity(name: Optional[str]):
         name = request.form.get("name")
         alias = request.form.get("alias")
         url = request.form.get("url")
-        update_link(name, alias, url)
+        update_entity(name, alias, url)
         return redirect(url_for("done", name=name))
 
 
