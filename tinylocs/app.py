@@ -12,11 +12,11 @@
 # (if it is a duplicate)
 
 
-import os
-import logging
-import functools
 from os import path
 from typing import Optional
+import functools
+import logging
+import os
 
 import flask
 from flask import request, redirect, url_for, session, render_template
@@ -100,8 +100,13 @@ def get(name: str):
     return db.collection("links").document(name)
 
 
-@app.route("/<name>", methods=["GET", "PUT", "POST", "DELETE"])
-def go(name):
+
+_METHODS = ["GET", "PUT", "POST", "DELETE"]
+
+
+@app.route(r'/<name>', methods=_METHODS)
+@app.route(r'/<name>/', methods=_METHODS)
+def go(name: str):
     if request.method == "GET":
         # Fetch link.
         doc_ref = get(name)

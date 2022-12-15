@@ -36,10 +36,10 @@ CREDS =									\
    -e TINYLOCS_PASS=$(TESTPASS)
 
 debug:
-	PYTHONUNBUFFERED=1 FLASK_ENV=development gunicorn --bind :8080 --workers 2 --threads 8 --timeout 0 tinylocs.app:app
+	PYTHONUNBUFFERED=1 FLASK_DEBUG=1 gunicorn --bind :8080 --workers 2 --threads 8 --timeout 0 tinylocs.app:app
 
 local:
-	GOOGLE_APPLICATION_CREDENTIALS=$(HOME)/.google/$(PROJECT).json PYTHONUNBUFFERED=1 FLASK_ENV=development FLASK_APP=tinylocs.app:app flask run --port=8080
+	GOOGLE_APPLICATION_CREDENTIALS=$(HOME)/.google/$(PROJECT).json PYTHONUNBUFFERED=1 FLASK_DEBUG=1 FLASK_APP=tinylocs.app:app flask run --port=8080
 
 run docker-run:
 	docker run -p 8080:$(PORT) -e PORT=$(PORT) $(CREDS) $(SERVICE)
