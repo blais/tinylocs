@@ -27,7 +27,7 @@ push:
 
 # Deploy the container to furius.ca.
 deploy:
-	gcloud run deploy $(SERVICE) --image $(IMAGE) --region=$(REGION) --allow-unauthenticated
+	gcloud run deploy $(SERVICE) --project $(PROJECT) --image $(IMAGE) --region=$(REGION) --allow-unauthenticated
 
 # Run the container locally for testing.
 CREDS =									\

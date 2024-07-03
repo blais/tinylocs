@@ -1,10 +1,11 @@
-FROM python:3.11-slim
+FROM python:3.12-slim
 ENV PYTHONUNBUFFERED True
 
 ENV APP_HOME /app
 WORKDIR $APP_HOME
 COPY . ./
 
+RUN pip install --no-cache-dir -U pip
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Note: the timeout is set to 0 to disable the timeouts of the workers to allow
